@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "onnx-agent"
+version = "0.1.0"
+description = "ONNX Agent for model optimization and deployment"
+requires-python = ">=3.8"
+dependencies = [
+    "pytest",
+    "pytest-cov",
+    "pytest-benchmark",
+    "numpy",
+    "onnx",
+    "onnxruntime",
+    "torch",
+    "dspy-ai",
+    "pyyaml",
+    "python-dotenv"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "--cov=onnx_agent --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["onnx_agent"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "pass",
+]
