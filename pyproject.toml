@@ -1,32 +1,59 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 [project]
 name = "onnx-agent"
 version = "0.1.0"
-description = "ONNX Agent for model optimization and deployment"
-requires-python = ">=3.8"
-dependencies = [
-    "pytest",
-    "pytest-cov",
-    "pytest-benchmark",
-    "numpy",
-    "onnx",
-    "onnxruntime",
-    "torch",
-    "dspy-ai",
-    "pyyaml",
-    "python-dotenv"
+description = "ONNX optimization and hardware integration agent"
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
 ]
+dependencies = [
+    "numpy>=1.24.0",
+    "onnx>=1.15.0",
+    "onnxruntime>=1.16.0",
+    "pytest>=7.0.0",
+    "pytest-benchmark>=4.0.0",
+    "memory-profiler>=0.61.0",
+    "py-spy>=0.3.0"
+]
+
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+gpu = [
+    "onnxruntime-gpu>=1.16.0"
+]
+tensorrt = [
+    "onnxruntime-tensorrt>=1.16.0"
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
-addopts = "--cov=onnx_agent --cov-report=term-missing"
+addopts = "-v"
+
+[tool.black]
+line-length = 100
+target-version = ["py38"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 100
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+check_untyped_defs = true
 
 [tool.coverage.run]
-source = ["onnx_agent"]
+source = ["src"]
+omit = ["tests/*", "setup.py"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -35,4 +62,5 @@ exclude_lines = [
     "raise NotImplementedError",
     "if __name__ == .__main__.:",
     "pass",
+    "raise ImportError"
 ]
