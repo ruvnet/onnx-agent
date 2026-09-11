@@ -1,2 +1,2 @@
 import {fileURLToPath} from 'node:url';import {execute} from './actions.mjs';
-if(process.argv[1]===fileURLToPath(import.meta.url)){try{const cmd=process.argv[2]||'status';if(cmd==='mcp')await import('./server.mjs');else console.log(JSON.stringify(await execute(cmd)));}catch(e){console.error(JSON.stringify({error:e.message}));process.exitCode=1;}}
+if(process.argv[1]===fileURLToPath(import.meta.url)){try{const cmd=process.argv[2]||'status';if(cmd==='mcp')await import('./server.mjs');else console.log(JSON.stringify(await execute(cmd)));}catch(e){console.error(JSON.stringify({error:e.message,...(process.argv[2]==='test'?{diagnostics:e.diagnostics}: {})}));process.exitCode=1;}}

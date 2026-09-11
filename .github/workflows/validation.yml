@@ -24,6 +24,7 @@ jobs:
           cache: npm
       - run: pip install -r requirements.txt pip-audit build
       - run: npm ci
+      - run: python -m unittest discover -s tests_v2 -v
       - run: npm test
       - run: pip-audit -r requirements.txt
       - run: npm audit --audit-level=moderate
