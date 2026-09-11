@@ -1,0 +1,5 @@
+import {McpServer,fromJsonSchema} from '@modelcontextprotocol/server';import {StdioServerTransport} from '@modelcontextprotocol/server/stdio';import {execute} from './actions.mjs';
+const server=new McpServer({name:'onnx-agent',version:'2.0.0'});const empty=fromJsonSchema({type:'object',properties:{},additionalProperties:false});
+for(const [name,action] of [['project_status','status'],['model_qualify','qualify'],['project_benchmark','benchmark'],['project_test','test']])server.registerTool(name,{inputSchema:empty},async()=>{try{if(action==='test'&&process.env.RUV_ALLOW_VALIDATION!=='1')throw Error('Disabled');return {content:[{type:'text',text:JSON.stringify(await execute(action))}]};}catch{return {isError:true,content:[{type:'text',text:'Qualification rejected by local policy'}]};}});
+server.registerResource('policy','ruv://onnx-agent/policy',{mimeType:'application/json'},async uri=>({contents:[{uri:uri.href,text:JSON.stringify({provider:'CPUExecutionProvider',fixtureOnly:true,externalModels:false,automaticPromotion:false,timeoutMs:30000,maxProcesses:1})}]}));
+await server.connect(new StdioServerTransport(process.stdin,process.stdout,{maxBufferSize:16384}));

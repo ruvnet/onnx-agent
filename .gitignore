@@ -169,3 +169,13 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+dist/
+playwright-report/
+test-results/
+build/
+*.egg-info/

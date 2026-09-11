@@ -1,0 +1,8 @@
+onnx==1.22.0
+onnxruntime==1.30.0
+numpy==2.5.3
+protobuf==7.36.1
+ml_dtypes==0.6.0
+typing_extensions==4.16.0
+flatbuffers==25.12.19
+packaging==26.3

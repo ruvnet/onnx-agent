@@ -1,0 +1,9 @@
+# Validation record
+
+Recorded 2026-09-11 on managed Linux x86_64, Python3.12 and Node24.19. Nine Python tests exercise actual ONNX Runtime CPU and NumPy parity, actual quantized size reduction, external data rejection, unsupported operators/providers, bytes and iteration bounds, actual CLI and initializer shape product overflow before checker invocation. One actual official SDK MCP test exercises CPU qualification, policy resource and denied validation/custom model arguments. All pass.
+
+pip-audit over requirements.txt and npm audit over package-lock.json report zero known vulnerabilities at execution time. Build produces a wheel containing only onnx_agent v2, excluding historical src. docs/benchmark.json contains a real1000iteration warm CPU benchmark with16holdout batches, version/hash/size provenance and explicit productionQualified:false. No GPU, physical hardware, trained semantic model, training or live deployment is validated.
+
+Independent review found numpy product overflow could bypass initializer count bounds. Fixed with rank<=2 and Python arbitrary precision math.prod, with a regression asserting rejection before checker invocation. MCP only accepts the internal fixture, so no caller graph reaches native inference.
+
+Qualification tolerances are fixture-specific: fp32 max absolute error<=1e-5; int8<=.04. Tiny matrix int8 was smaller and slightly slower in a reference run; do not extrapolate superiority. Remaining real-model, provider and sandbox gates are tracked in issue1. Historical tests are preserved but excluded, and no claim is made that old DSPy APIs pass current dependencies.
