@@ -11,7 +11,7 @@ This is a working qualification foundation, not a general model training service
 | Capability | Behavior |
 |---|---|
 | Export | Seeded 64 by 32 linear graph, fixed batch 8, opset 13 and IR 10 |
-| Optimization | Actual ONNX Runtime dynamic int8 quantization and graph optimization |
+| Optimization | Actual dynamic int8 quantization; ORT_DISABLE_ALL versus ORT_ENABLE_ALL at one CPU thread, with parity and measured 5% latency improvement gate |
 | Differential validation | 16 held out input batches against NumPy; fp32 error <=0.00001, int8 <=0.04 |
 | Benchmark | 20 warmups, 1 to 1000 measured iterations, p50/p95 latency, bytes and SHA256 |
 | Structural validation | Bounded local ONNX files, operator allowlist, static shape limits, no external tensors or custom functions |

@@ -27,3 +27,9 @@ class PipelineTests(unittest.TestCase):
   with patch('onnx.checker.check_model') as checker:
    with self.assertRaisesRegex(ValueError,'tensor dimensions'):validate(m.SerializeToString())
    checker.assert_not_called()
+
+ def test_optimization_parity(self):
+  d,w,b=fixture();x=np.ones((8,64),dtype=np.float32)
+  a=session(d,'CPUExecutionProvider',False).run(None,{'input':x})[0]
+  z=session(d,'CPUExecutionProvider',True).run(None,{'input':x})[0]
+  np.testing.assert_allclose(a,z,atol=1e-6)
