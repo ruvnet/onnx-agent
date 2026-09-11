@@ -2,7 +2,7 @@
 
 # ONNX Agent
 
-ONNX Agent measures whether a model optimization preserves numerical output and actually improves deployment cost. Its v2 pipeline exports a deterministic linear model to ONNX, checks it, quantizes its weights to int8, executes both models through ONNX Runtime CPU and compares them against an independent NumPy reference.
+ONNX Agent measures whether a model optimization preserves numerical output and actually improves deployment cost. Its v2 pipeline exports a deterministic linear model to ONNX, checks it, quantizes its weights to int8 storage with a reduced 7 bit range, executes both models through ONNX Runtime CPU and compares them against an independent NumPy reference.
 
 This is a working qualification foundation, not a general model training service. The historical DSPy and PyTorch experiment code remains in `src/` and its tests in `tests/`; those components are excluded from the v2 wheel and supported test suite. They have not been certified against current APIs. Repeated inference is not test time training.
 
@@ -46,7 +46,7 @@ MCP tools: `project_status`, `model_qualify`, `project_benchmark`, `project_test
 
 ## Measured result
 
-One local run with 1000 iterations reduced serialized size from 8464 to 2876 bytes, about 66%. Int8 p95 was 0.00530 ms versus float32 0.00493 ms, approximately 8% slower on this tiny fixture. Maximum int8 absolute error was 0.01849. Quantization is not automatically faster; measure your workload. These numbers are fixture results, not state of the art or production model claims.
+One local run with 1000 iterations reduced serialized size from 8464 to 2876 bytes, about 66%. Int8 p95 was 0.00530 ms versus float32 0.00493 ms, approximately 8% slower on this tiny fixture. That initial full range int8 run had maximum absolute error 0.01849 locally but failed at 0.21932 on another CI CPU. The current reduced range quantizer avoids the documented U8S8 saturation path and measures 0.02837 locally without relaxing the 0.04 acceptance bound. Quantization is not automatically faster; measure your workload. These numbers are fixture results, not state of the art or production model claims.
 
 See [validation](docs/validation.md), [architecture decision](docs/adr/0001-qualification.md), [security](SECURITY.md) and [MetaHarness guide](.harness/README.md). CI tests supported Python versions, audits dependencies, builds the wheel and uploads validation evidence and distribution artifacts. No model is promoted or deployed automatically.
 

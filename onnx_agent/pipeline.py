@@ -52,7 +52,7 @@ def qualify(iterations=100,provider='CPUExecutionProvider'):
     reference=[x@w+b for x in inputs]
     with tempfile.TemporaryDirectory(prefix='onnx-qualify-') as tmp:
         src=Path(tmp)/'source.onnx'; dst=Path(tmp)/'int8.onnx'; src.write_bytes(data)
-        quantize_dynamic(str(src),str(dst),weight_type=QuantType.QInt8,op_types_to_quantize=['MatMul'])
+        quantize_dynamic(str(src),str(dst),weight_type=QuantType.QInt8,op_types_to_quantize=['MatMul'],reduce_range=True)
         quant=dst.read_bytes()
     qs=session(quant,provider)
     results={}; variants=[('baselineFloat32',data,baseline),('float32',data,fp),('int8',quant,qs)]
@@ -71,4 +71,4 @@ def qualify(iterations=100,provider='CPUExecutionProvider'):
     passed=results['baselineFloat32']['maxAbsoluteError']<=1e-5 and results['float32']['maxAbsoluteError']<=1e-5 and results['int8']['maxAbsoluteError']<=.04
     speedup=results['baselineFloat32']['p95Ms']/results['float32']['p95Ms']
     optimization={'baseline':'ORT_DISABLE_ALL','candidate':'ORT_ENABLE_ALL','threads':1,'measurementOrder':'rotating interleaved','p95Speedup':speedup,'measuredLatencyGatePass':speedup>=1.05 and results['float32']['maxAbsoluteError']<=1e-5,'minimumSpeedup':1.05,'requiresRepeatedTargetHardwareRuns':True,'automaticPromotion':False}
-    return {'optimizationComparison':optimization,'schemaVersion':1,'fixture':'seeded-linear-64x32','provider':provider,'availableProviders':ort.get_available_providers(),'iterations':iterations,'holdoutBatches':16,'results':results,'parityPass':passed,'automaticPromotion':False,'productionQualified':False,'versions':{'onnx':onnx.__version__,'onnxruntime':ort.__version__,'numpy':np.__version__}}
+    return {'quantization':{'storage':'int8','effectiveWeightBits':7,'reduceRange':True,'reason':'avoid U8S8 pairwise saturation on non-VNNI x86'},'optimizationComparison':optimization,'schemaVersion':1,'fixture':'seeded-linear-64x32','provider':provider,'availableProviders':ort.get_available_providers(),'iterations':iterations,'holdoutBatches':16,'results':results,'parityPass':passed,'automaticPromotion':False,'productionQualified':False,'versions':{'onnx':onnx.__version__,'onnxruntime':ort.__version__,'numpy':np.__version__}}

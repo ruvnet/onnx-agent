@@ -33,3 +33,14 @@ class PipelineTests(unittest.TestCase):
   a=session(d,'CPUExecutionProvider',False).run(None,{'input':x})[0]
   z=session(d,'CPUExecutionProvider',True).run(None,{'input':x})[0]
   np.testing.assert_allclose(a,z,atol=1e-6)
+
+ def test_quantized_weights_cannot_saturate_pair_accumulator(self):
+  from unittest.mock import patch
+  generated=[]
+  def inspect(*args,**kwargs):
+   quantize_dynamic(*args,**kwargs)
+   m=onnx.load(args[1]); generated.extend(numpy_helper.to_array(t) for t in m.graph.initializer if t.name=='w_quantized')
+  with patch('onnx_agent.pipeline.quantize_dynamic',side_effect=inspect):qualify(1)
+  self.assertEqual(len(generated),1)
+  worst_pair=2*255*int(np.max(np.abs(generated[0].astype(np.int16))))
+  self.assertLessEqual(worst_pair,32767)
