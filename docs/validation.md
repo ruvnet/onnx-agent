@@ -7,3 +7,7 @@ pip-audit over requirements.txt and npm audit over package-lock.json report zero
 Independent review found numpy product overflow could bypass initializer count bounds. Fixed with rank<=2 and Python arbitrary precision math.prod, with a regression asserting rejection before checker invocation. MCP only accepts the internal fixture, so no caller graph reaches native inference.
 
 Qualification tolerances are fixture-specific: fp32 max absolute error<=1e-5; int8<=.04. Tiny matrix int8 was smaller and slightly slower in a reference run; do not extrapolate superiority. Remaining real-model, provider and sandbox gates are tracked in issue1. Historical tests are preserved but excluded, and no claim is made that old DSPy APIs pass current dependencies.
+
+CI qualification caught NumPy2.5 requiring Python>=3.12. The declared package and supported matrix now match that real dependency minimum; Python3.11 is unsupported.
+
+RuFlo3.25.6 deep security scan completed with zero findings. This heuristic result supplements, and does not replace, the manual native parser trust boundary review and dependency audits.

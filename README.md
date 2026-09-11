@@ -20,7 +20,7 @@ This is a working qualification foundation, not a general model training service
 
 ## Install
 
-Python 3.11 or later and Node 24 are required.
+Python 3.12 or later and Node 24 are required.
 
 ```sh
 python -m venv .venv
