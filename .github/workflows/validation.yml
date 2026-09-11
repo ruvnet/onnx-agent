@@ -1,0 +1,39 @@
+name: Validate and deliver ONNX qualification
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        python: ['3.12', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: pip install -r requirements.txt pip-audit build
+      - run: npm ci
+      - run: python -m unittest discover -s tests_v2 -v
+      - run: npm test
+      - run: pip-audit -r requirements.txt
+      - run: npm audit --audit-level=moderate
+      - run: python -m onnx_agent qualify --iterations 1000 > qualification.json
+      - run: python -m build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: onnx-qualification-${{ matrix.python }}
+          path: |
+            qualification.json
+            dist/
+          if-no-files-found: error

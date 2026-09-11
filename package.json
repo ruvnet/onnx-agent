@@ -1,0 +1,17 @@
+{
+  "name": "onnx-agent-tools",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node mcp/cli.mjs test && node --test mcp/test.mjs",
+    "benchmark": "node mcp/cli.mjs benchmark",
+    "mcp": "node mcp/server.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.0.0"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "2.0.0"
+  }
+}

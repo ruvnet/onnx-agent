@@ -1,0 +1,3 @@
+import {fileURLToPath} from 'node:url';import {existsSync} from 'node:fs';import {bounded} from './process.mjs';
+export const root=fileURLToPath(new URL('..',import.meta.url));export const python=process.env.ONNX_PYTHON||(existsSync(`${root}/.venv/bin/python`)?`${root}/.venv/bin/python`:'python');
+export async function execute(command){if(!['status','qualify','benchmark','test'].includes(command))throw Error('Unknown command');const args=command==='test'?['-m','unittest','discover','-s','tests_v2','-v']:['-m','onnx_agent',command];const r=await bounded(python,args,root,{PYTHONPATH:root});return command==='test'?r:JSON.parse(r.output);}

@@ -127,7 +127,7 @@ class DSPyIntegration:
         if not path.exists():
             raise FileNotFoundError(f"Checkpoint not found: {path}")
             
-        checkpoint = torch.load(path, map_location=self.device)
+        checkpoint = torch.load(path, map_location=self.device, weights_only=True)
         
         # Update config
         self.config.update(checkpoint["config"])
